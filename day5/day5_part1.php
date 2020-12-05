@@ -6,11 +6,7 @@ $colRange = [0, 7];
 $passes = [];
 
 foreach ($values as $line) {
-    $pass = new BoardingPass();
-    $pass->passId = $line;
-    $pass->row = $pass->calculateRow($rowRange);
-    $pass->col = $pass->calculateCol($colRange);
-    $pass->seatId = $pass->calculateSeatId();
+    $pass = new BoardingPass($line, $rowRange, $colRange);
     $passes[] = $pass;
 }
 
@@ -24,6 +20,14 @@ class BoardingPass
     public $col;
     public $seatId;
 
+    public function __construct($passId, $rowRange, $colRange)
+    {
+        $this->passId = $passId;
+        $this->setRow($rowRange);
+        $this->setCol($colRange);
+        $this->setSeatId();
+    }
+
     public function upperHalf($range)
     {
         $rangeVal = ($range[1] - $range[0]) + 1;
@@ -36,7 +40,7 @@ class BoardingPass
         return [$range[0], $range[1] - ($rangeVal / 2)];
     }
 
-    public function calculateRow($rowRange)
+    public function setRow($rowRange)
     {
         $rowString = substr($this->passId, 0, 7);
         $rowInstruction = str_split($rowString);
@@ -48,10 +52,10 @@ class BoardingPass
                 $range = $this->upperHalf($range);
             }
         }
-        return $range[0];
+        $this->row = $range[0];
     }
 
-    public function calculateCol($colRange)
+    public function setCol($colRange)
     {
         $colString = substr($this->passId, 7);
         $colInstruction = str_split($colString);
@@ -63,12 +67,12 @@ class BoardingPass
                 $range = $this->upperHalf($range);
             }
         }
-        return $range[0];
+        $this->col = $range[0];
     }
 
-    public function calculateSeatId()
+    public function setSeatId()
     {
-        return $this->row * 8 + $this->col;
+        $this->seatId = $this->row * 8 + $this->col;
     }
 
 }
