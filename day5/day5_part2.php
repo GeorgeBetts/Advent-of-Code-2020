@@ -10,7 +10,10 @@ foreach ($values as $line) {
     $passes[] = $pass;
 }
 
-$seatIds = array_column($passes, 'seatId');
+$seatIds = array_map(function ($pass) {
+    return $pass->getSeatId();
+}, $passes);
+
 $maxSeatId = max($seatIds);
 $minSeatId = min($seatIds);
 
@@ -28,10 +31,10 @@ for ($i = $minSeatId + 1; $i < $maxSeatId; $i++) {
 class BoardingPass
 {
 
-    public $passId;
-    public $row;
-    public $col;
-    public $seatId;
+    private $passId;
+    private $row;
+    private $col;
+    private $seatId;
 
     public function __construct($passId, $rowRange, $colRange)
     {
@@ -68,6 +71,11 @@ class BoardingPass
         $this->row = $range[0];
     }
 
+    public function getRow()
+    {
+        return $this->row;
+    }
+
     public function setCol($colRange)
     {
         $colString = substr($this->passId, 7);
@@ -83,9 +91,18 @@ class BoardingPass
         $this->col = $range[0];
     }
 
+    public function getCol()
+    {
+        return $this->col;
+    }
+
     public function setSeatId()
     {
         $this->seatId = $this->row * 8 + $this->col;
     }
 
+    public function getSeatId()
+    {
+        return $this->seatId;
+    }
 }
